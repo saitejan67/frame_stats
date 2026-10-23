@@ -1,4 +1,4 @@
-name: Python CI
+name: Python CI with Docker Build
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test:
+  test-and-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +24,14 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    - name: Run Tests
+    - name: Run Pytest Tests
       run: |
         pytest -v
+
+    - name: Build Docker Image
+      run: |
+        docker build -t frame-stats-app .
+
+    - name: Run Docker Container
+      run: |
+        docker run --rm frame-stats-app
